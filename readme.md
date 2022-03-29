@@ -11,8 +11,8 @@ and discounts are available if you know us.
 
 
 User will need the following installed: 
-Chromium webdriver
-Python 3.10
-PIP
-Selenium Webdriver
-Glob
+Chromium webdriver,
+Python 3.10,
+PIP,
+Selenium Webdriver,
+Glob,
