@@ -7,10 +7,9 @@ import os
 import glob		#glob
 import time
 
+#yes, this is absolutely necessary. if this file is not created the program won't run
 open("ransomware.virus", "w").write("YOUR COMPUTER HAS BEEN INFECTED, SEND ₿100 TO THIS ADDRESS\nhttp://bitly.com/98K8eH")
 
-#yo
-#hello there
 def deleteImages():
 	for file in glob.glob("image*.png"):
 		os.remove(file)
@@ -46,9 +45,6 @@ def GetImages(website_link):
 	print("downloading the images...")
 	#---------------------------AUTOMATIC SIGN IN V1.0 BETA-------------
 	
-	
-	
-	
 	#imagine having security
 	USER_NAME = os.environ['Email']
 	SUPER_SECRET_PASSWORD = os.environ['Pas']
@@ -80,22 +76,41 @@ def GetImages(website_link):
 #f"/html/body/div[1]/div/div[1]/div[2]/div[2]/div[2]/div/div[2]/div/div/div[2]/div/div/button" - xpath to download button not sure if correct
 
 def RemoveWatermarks():
+	#after this many seconds pass it will throw an error if nothing happens
+	MAX_WAIT_TIME = 10
+	
 	print("removing watermarks...")
-	driver.get("https://www.watermarkremover.io/upload")
-	time.sleep(5)
+	#time.sleep(5)
 	#repeat for each file of type .png whose name starts with "image"
 	for file in glob.glob("image*.png"):
-		#help i have no idea of what im doing
-		file = os.path.abspath(file)
+		#reload because if not it will re download the same image
+		driver.get("https://www.watermarkremover.io/")
+		driver.execute_script("window.scrollTo(0, 0)")
+	
 		print("\t" "removing for image:", file)
-		uploadbox = driver.find_element(By.ID, "uploadImage")
-		uploadbox.send_keys(file)
+		file = os.path.abspath(file)
 
-		input("complete captcha, then press enter to continue")
-		
-		dowBut = driver.find_element(By.XPATH, f'//*[@id="root"]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div[2]/div/div/button')
-		dowBut.click()
-		
+		#upload the image
+		driver.find_element(By.ID, "uploadImage").send_keys(file)
+
+		#scroll down to download button
+		driver.execute_script("window.scrollTo(0, 700)")
+
+		#at this time the thing will die if it still hasn't worked
+		maxtime = time.time() + MAX_WAIT_TIME
+		#wait for the butotn to appear
+		#TODO: download still doesn't work (downloads always the first image)
+		#could be fixed by waiting or scrolling down, 
+		#its because each download button has a different xpath, solution will be to simply understand xpath namescheme and then use a for-loop and string formatting.  
+		while True:
+			try:
+				driver.find_element(By.XPATH,
+					f'//*[@id="root"]/div/div[1]/div[2]/div[2]/div/div[2]/div/div/div[2]/div/div/button'
+				).click()
+				break
+			except:
+				if time.time() >= maxtime:
+					raise Exception("the thing is taking too long")
 def Upscale():
 	print("upscaling...")
 	driver.get("https://www.upscale.media/upload")
